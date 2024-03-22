@@ -4,11 +4,11 @@ package com.yiu.arcap.controller;
 import com.yiu.arcap.dto.AuthGenerateRequestDto;
 import com.yiu.arcap.dto.AuthVerifyRequestDto;
 import com.yiu.arcap.dto.NickCheckRequestDto;
-import com.yiu.arcap.dto.TokenDto;
+import com.yiu.arcap.dto.TokenRequestDto;
+import com.yiu.arcap.dto.TokenResponseDto;
 import com.yiu.arcap.dto.UserLoginRequestDto;
 import com.yiu.arcap.dto.UserLoginResponseDto;
 import com.yiu.arcap.dto.UserResisterRequestDto;
-import com.yiu.arcap.service.TokenService;
 import com.yiu.arcap.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
-    private final TokenService tokenService;
 
     @PostMapping(value = "/join", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Boolean> join(UserResisterRequestDto request) throws Exception {
@@ -49,8 +48,8 @@ public class UserController {
         return new ResponseEntity<Boolean>(userService.checkNicknameDuplication(request), HttpStatus.OK);
     }
 
-//    @PostMapping(value = "/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-//    public ResponseEntity<TokenDto> refresh(TokenDto token) throws Exception {
-//        return new ResponseEntity<>(userService.generateNewAccessToken(token), HttpStatus.OK);
-//    }
+    @PostMapping(value = "/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<TokenResponseDto> refresh(TokenRequestDto tokenRequestDto) throws Exception {
+        return new ResponseEntity<TokenResponseDto>(userService.generateNewAccessToken(tokenRequestDto), HttpStatus.OK);
+    }
 }

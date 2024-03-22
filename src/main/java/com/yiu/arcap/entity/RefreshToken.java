@@ -1,8 +1,6 @@
 package com.yiu.arcap.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Id;
-import java.util.concurrent.TimeUnit;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,17 +13,21 @@ import org.springframework.data.redis.core.TimeToLive;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Token {
+public class RefreshToken {
+
     @Id
-    @JsonIgnore
-    private Long id;
+    private Long id; // 토큰의 ID로 이를 사용자 식별자(예: 이메일 또는 사용자 ID)로 설정할 수 있습니다.
 
-    private String refreshToken;
+    private String refreshToken; // 리프레시 토큰 값
 
-    private String accessToken;
+    @TimeToLive
+    private Long expiration; // 토큰 만료 시간 (초 단위)
 
-    @TimeToLive(unit = TimeUnit.SECONDS)
-    private Long expiration;
+    // setter 메서드는 필요에 따라 추가
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
     public void setExpiration(Long expiration) {
         this.expiration = expiration;
     }

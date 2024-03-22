@@ -8,5 +8,5 @@ import lombok.Setter;
 public class UserLoginRequestDto {
     private String email;
     private String password;
-    private TokenDto token;
+    private TokenRequestDto token;
 }

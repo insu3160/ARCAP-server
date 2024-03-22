@@ -2,15 +2,16 @@ package com.yiu.arcap.service;
 
 import com.yiu.arcap.dto.AuthVerifyRequestDto;
 import com.yiu.arcap.dto.NickCheckRequestDto;
-import com.yiu.arcap.dto.TokenDto;
+import com.yiu.arcap.dto.TokenRequestDto;
+import com.yiu.arcap.dto.TokenResponseDto;
 import com.yiu.arcap.dto.UserLoginRequestDto;
 import com.yiu.arcap.dto.UserLoginResponseDto;
 import com.yiu.arcap.dto.UserResisterRequestDto;
-import com.yiu.arcap.entity.Token;
+import com.yiu.arcap.entity.RefreshToken;
 import com.yiu.arcap.entity.User;
 import com.yiu.arcap.exception.CustomException;
 import com.yiu.arcap.exception.ErrorCode;
-import com.yiu.arcap.repository.TokenRepository;
+import com.yiu.arcap.repository.RefreshTokenRepository;
 import com.yiu.arcap.repository.UserRepository;
 import com.yiu.arcap.security.TokenProvider;
 import com.yiu.arcap.util.RandomNumberGenerator;
@@ -18,13 +19,10 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +40,8 @@ public class UserService {
     private final JavaMailSender emailSender;
 
     private final RedisTemplate<String, String> redisTemplate;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // <API> 회원가입
     @Transactional
@@ -88,19 +88,18 @@ public class UserService {
 
 
         try {
-            // 리프레시 토큰 생성
-            user.setRefreshToken(tokenProvider.generateRefreshToken(user));
-//            user.setFcm(request.getFcm());
-            // String accessToken = tokenProvider.generateToken(user, Duration.ofHours(2));
+            String refreshToken = tokenProvider.generateRefreshToken(user);
+            String accessToken = tokenProvider.generateToken(user);
             return UserLoginResponseDto.builder()
                     .uid(user.getUid())
                     .email(user.getEmail())
                     .nickname(user.getNickname())
-                    .token(TokenDto.builder()
-                            .accessToken(tokenProvider.generateToken(user))
-                            .refreshToken(user.getRefreshToken())
+                    .token(TokenResponseDto.builder()
+                            .accessToken(accessToken)
+                            .refreshToken(refreshToken)
                             .build())
                     .build();
+
         }
         catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
@@ -169,7 +168,28 @@ public class UserService {
         return true;
     }
 
-//    public TokenDto generateNewAccessToken(TokenDto token) {
-//
-//    }
+    public TokenResponseDto generateNewAccessToken(TokenRequestDto tokenRequestDto) {
+        if (tokenProvider.validToken(tokenRequestDto.getAccessToken())) {
+            // 액세스 토큰이 아직 유효하면 새로 발급할 필요가 없습니다.
+            throw new CustomException(ErrorCode.ACCESS_TOKEN_PRESENT);
+        }
+
+        // 리프레시 토큰으로 사용자 정보 조회
+        String refreshToken = tokenRequestDto.getRefreshToken();
+
+        RefreshToken storedToken = refreshTokenRepository.findById(tokenProvider.getUserIdFromExpiredToken(tokenRequestDto.getAccessToken()))
+                .orElseThrow(() -> new CustomException(ErrorCode.REFRESH_TOKEN_EXPIRED));
+
+        if (!storedToken.getRefreshToken().equals(refreshToken)){
+            throw new CustomException(ErrorCode.STOLEN_REFRESH_TOKEN);
+        }
+
+        User user = userRepository.findById(storedToken.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST));
+
+        String newAccessToken = tokenProvider.generateToken(user);
+
+        // 새로운 TokenDto 객체를 생성하여 반환
+        return new TokenResponseDto(refreshToken, newAccessToken);
+    }
 }

@@ -18,4 +18,6 @@ public class ErrorMessage {
     public static final String INTERNAL_SERVER_ERROR = "내부 서버 오류";
     public static final String REDIS_SERVER_ERROR = "Redis 서버 오류";
     public static final String VALID_NOT_AUTHCODE = "잘못된 인증 코드";
+    public static final String ACCESS_TOKEN_PRESENT = "만료되지 않은 엑세스토큰";
+    public static final String STOLEN_REFRESH_TOKEN = "탈취당한 리프레시 토큰";
 }

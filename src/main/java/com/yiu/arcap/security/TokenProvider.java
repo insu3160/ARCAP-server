@@ -1,15 +1,16 @@
 package com.yiu.arcap.security;
 
-import com.yiu.arcap.entity.Token;
+import com.yiu.arcap.entity.RefreshToken;
 import com.yiu.arcap.entity.User;
-import com.yiu.arcap.repository.TokenRepository;
+import com.yiu.arcap.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.Key;
 import java.time.Duration;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
@@ -26,7 +27,7 @@ import org.springframework.stereotype.Component;
 public class TokenProvider {
 
     private final JwtProperties jwtProperties;
-    private final TokenRepository tokenRepository;
+    private final RefreshTokenRepository tokenRepository;
 
     @Value("${jwt.secret.key}")
     private String salt;
@@ -56,8 +57,8 @@ public class TokenProvider {
                 .compact();
     }
     public String generateRefreshToken(User user) {
-        Token token = tokenRepository.save(
-                Token.builder()
+        RefreshToken token = tokenRepository.save(
+                RefreshToken.builder()
                         .id(user.getUid())
                         .refreshToken(UUID.randomUUID().toString())
                         .expiration(refreshTokenValidTime)
@@ -96,6 +97,21 @@ public class TokenProvider {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+    public Long getUserIdFromExpiredToken(String token) {
+        try {
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(jwtProperties.getKey())
+                    .build()
+                    .parseClaimsJws(token);
+            return claims.getBody().get("uid", Long.class);
+        } catch (ExpiredJwtException e) {
+            // 만료된 토큰에서도 클레임을 추출합니다.
+            return e.getClaims().get("uid", Long.class);
+        } catch (Exception e) {
+            // 다른 종류의 예외 처리
+            throw new RuntimeException("토큰 파싱 실패", e);
+        }
     }
 
 }

@@ -42,9 +42,6 @@ public class User implements UserDetails {
     private String password;
 
     @Column(columnDefinition = "TEXT")
-    private String refreshToken;
-
-    @Column(columnDefinition = "TEXT")
     private String fcm;
 
     //    @CreatedDate
