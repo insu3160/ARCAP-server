@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserLoginResponseDto {
-    private Long uid;
     private String email;
     private String nickname;
     private TokenResponseDto token;

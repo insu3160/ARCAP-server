@@ -8,8 +8,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Transactional
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
+public interface UserRepository extends JpaRepository<User, String> {
 
     Optional<User> findByNickname(String nickname);
 

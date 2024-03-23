@@ -1,14 +1,10 @@
 package com.yiu.arcap.util;
 
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import java.security.SecureRandom;
-import java.util.Locale;
 import java.util.Random;
-import org.springframework.mail.javamail.JavaMailSender;
 
-public class RandomNumberGenerator {
+public class RandomCodeGenerator {
     private final static int CODE_LENGTH = 8;
     public static String createCode() {
         // 원하는 코드 길이 설정

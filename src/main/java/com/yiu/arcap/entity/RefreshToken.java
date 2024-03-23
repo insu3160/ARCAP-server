@@ -16,7 +16,7 @@ import org.springframework.data.redis.core.TimeToLive;
 public class RefreshToken {
 
     @Id
-    private Long id; // 토큰의 ID로 이를 사용자 식별자(예: 이메일 또는 사용자 ID)로 설정할 수 있습니다.
+    private String id; // 토큰의 ID로 이를 사용자 식별자(예: 이메일 또는 사용자 ID)로 설정할 수 있습니다.
 
     private String refreshToken; // 리프레시 토큰 값
 

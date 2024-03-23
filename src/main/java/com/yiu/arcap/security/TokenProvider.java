@@ -1,8 +1,10 @@
 package com.yiu.arcap.security;
 
+import com.yiu.arcap.config.CustomUserDetails;
 import com.yiu.arcap.entity.RefreshToken;
 import com.yiu.arcap.entity.User;
 import com.yiu.arcap.repository.RefreshTokenRepository;
+import com.yiu.arcap.service.UserDetailService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -28,13 +30,14 @@ public class TokenProvider {
 
     private final JwtProperties jwtProperties;
     private final RefreshTokenRepository tokenRepository;
+    private final UserDetailService userDetailService;
 
     @Value("${jwt.secret.key}")
     private String salt;
 
     private Key secretKey;
     // 만료시간 => 1h => 1000L * 60 * 60
-    private final long accessTokenValidTime = Duration.ofMinutes(1).toMillis();
+    private final long accessTokenValidTime = Duration.ofMinutes(5).toMillis();
 
     private final long refreshTokenValidTime = Duration.ofDays(14).toMillis();
     public String generateToken(User user) {
@@ -52,14 +55,13 @@ public class TokenProvider {
                 .setSubject(user.getEmail())
                 .claim("email", user.getEmail())
                 .claim("nickname",user.getNickname())
-                .claim("uid", user.getUid())
                 .signWith(jwtProperties.getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
     public String generateRefreshToken(User user) {
         RefreshToken token = tokenRepository.save(
                 RefreshToken.builder()
-                        .id(user.getUid())
+                        .id(user.getEmail())
                         .refreshToken(UUID.randomUUID().toString())
                         .expiration(refreshTokenValidTime)
                         .build()
@@ -78,19 +80,17 @@ public class TokenProvider {
         }
     }
 
-    public Authentication getAuthentication(String token){
-        Claims claims = getClaims(token);
-        Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
 
-        return new UsernamePasswordAuthenticationToken(new org.springframework.security.core.userdetails.User(
-                claims.getSubject(),"",authorities
-        ), token, authorities);
+    public Authentication getAuthentication(String token) {
+        CustomUserDetails userDetails = (CustomUserDetails) userDetailService.loadUserByUsername(this.getEmail(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
 
-    public Long getUserId(String token) {
+    private String getEmail(String token) {
         Claims claims = getClaims(token);
-        return claims.get("uid", Long.class);
+        return claims.get("email", String.class);
     }
+
     private Claims getClaims(String token){
         return Jwts.parserBuilder()
                 .setSigningKey(jwtProperties.getKey())
@@ -98,16 +98,16 @@ public class TokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
     }
-    public Long getUserIdFromExpiredToken(String token) {
+    public String getUserIdFromExpiredToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(jwtProperties.getKey())
                     .build()
                     .parseClaimsJws(token);
-            return claims.getBody().get("uid", Long.class);
+            return claims.getBody().get("email", String.class);
         } catch (ExpiredJwtException e) {
             // 만료된 토큰에서도 클레임을 추출합니다.
-            return e.getClaims().get("uid", Long.class);
+            return e.getClaims().get("email", String.class);
         } catch (Exception e) {
             // 다른 종류의 예외 처리
             throw new RuntimeException("토큰 파싱 실패", e);

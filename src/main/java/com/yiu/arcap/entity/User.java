@@ -6,9 +6,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,12 +28,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements UserDetails {
+public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long uid;
-
     @Column(nullable = false)
     private String email;
 
@@ -54,6 +54,9 @@ public class User implements UserDetails {
     @Column
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "user")
+    private Set<UserParty> userParties = new HashSet<>();
+
     public User(String email, String nickname, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.email = email;
         this.nickname = nickname;
@@ -66,33 +69,4 @@ public class User implements UserDetails {
         this.password = passwordEncoder.encode(password);
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("user"));
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

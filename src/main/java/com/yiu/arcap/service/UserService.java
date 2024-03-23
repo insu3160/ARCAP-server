@@ -14,7 +14,7 @@ import com.yiu.arcap.exception.ErrorCode;
 import com.yiu.arcap.repository.RefreshTokenRepository;
 import com.yiu.arcap.repository.UserRepository;
 import com.yiu.arcap.security.TokenProvider;
-import com.yiu.arcap.util.RandomNumberGenerator;
+import com.yiu.arcap.util.RandomCodeGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
@@ -62,16 +62,6 @@ public class UserService {
         return true;
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
-    }
-
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(()-> {
-            return new IllegalArgumentException("User ID를 찾을 수 없습니다.");
-        });
-    }
 
     @Transactional
     public UserLoginResponseDto login(UserLoginRequestDto request) {
@@ -79,7 +69,7 @@ public class UserService {
             throw new CustomException(ErrorCode.INSUFFICIENT_DATA);
 
         // 401 - 유저 존재 확인
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_EXIST));
+        User user = userRepository.findById(request.getEmail()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 401 - 비밀번호 일치 확인
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -91,7 +81,6 @@ public class UserService {
             String refreshToken = tokenProvider.generateRefreshToken(user);
             String accessToken = tokenProvider.generateToken(user);
             return UserLoginResponseDto.builder()
-                    .uid(user.getUid())
                     .email(user.getEmail())
                     .nickname(user.getNickname())
                     .token(TokenResponseDto.builder()
@@ -109,7 +98,7 @@ public class UserService {
 
     public String authGenerate(String email) throws Exception {
 
-        String authCode = RandomNumberGenerator.createCode();
+        String authCode = RandomCodeGenerator.createCode();
         MimeMessage emailForm = createEmailForm(email, authCode);
         emailSender.send(emailForm);
         redisTemplate.opsForValue().set(email, authCode, EXPIRATIONTIME, TimeUnit.MINUTES);
