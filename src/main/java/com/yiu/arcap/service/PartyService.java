@@ -2,6 +2,7 @@ package com.yiu.arcap.service;
 
 import com.yiu.arcap.constant.ParticipationStatus;
 import com.yiu.arcap.dto.PartyRequest.CreateDTO;
+import com.yiu.arcap.dto.PartyRequest.JoinDTO;
 import com.yiu.arcap.dto.PartyResponse;
 import com.yiu.arcap.dto.UserLoginResponseDto;
 import com.yiu.arcap.entity.Party;
@@ -31,9 +32,10 @@ public class PartyService {
         if(request.getPartyName() == null) {
             throw new CustomException(ErrorCode.INSUFFICIENT_DATA);
         }
+        User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         try {
             // 유저 확인 404 포함
-            User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+
             String uniqueCode;
             do {
                 uniqueCode = RandomCodeGenerator.createCode();
@@ -49,10 +51,8 @@ public class PartyService {
             UserParty userParty = UserParty.builder()
                     .user(user)
                     .party(party)
-                    .status(ParticipationStatus.ACCEPTED)
                     .build();
-            userParty.setUser(user);
-            userParty.setParty(party);
+            userParty.updateStatus(ParticipationStatus.ACCEPTED);
             userPartyRepository.save(userParty);
         }
         catch (Exception e) {
@@ -61,4 +61,24 @@ public class PartyService {
         return true;
     }
 
+    public Boolean join(String email, JoinDTO request) {
+        if (request.getPartyCode() == null){
+            throw new CustomException(ErrorCode.INSUFFICIENT_DATA);
+        }
+        User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        Party party = partyRepository.findByPartyCode(request.getPartyCode()).orElseThrow(()->new CustomException(ErrorCode.PARTY_NOT_FOUND));
+        try {
+
+            UserParty userParty = UserParty.builder()
+                    .user(user)
+                    .party(party)
+                    .status(ParticipationStatus.PENDING)
+                    .build();
+            userPartyRepository.save(userParty);
+        }
+        catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+        return true;
+    }
 }

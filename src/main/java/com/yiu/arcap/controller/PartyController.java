@@ -30,4 +30,9 @@ public class PartyController {
         return new ResponseEntity<Boolean>(partyService.create(user.getUsername(), request), HttpStatus.OK);
     }
 
+    @PostMapping(value = "/join",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<Boolean> join(@AuthenticationPrincipal CustomUserDetails user, PartyRequest.JoinDTO request) throws Exception {
+        return new ResponseEntity<Boolean>(partyService.join(user.getUsername(), request), HttpStatus.OK);
+    }
+
 }

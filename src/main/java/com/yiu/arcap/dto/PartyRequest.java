@@ -10,4 +10,9 @@ public class PartyRequest {
     public static class CreateDTO {
         private String partyName;
     }
+    @Getter
+    @Setter
+    public static class JoinDTO {
+        private String partyCode;
+    }
 }

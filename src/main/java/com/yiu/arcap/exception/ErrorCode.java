@@ -41,7 +41,8 @@ public enum ErrorCode {
     REDIS_SERVER_ERROR(500, ErrorMessage.REDIS_SERVER_ERROR),
     ACCESS_TOKEN_PRESENT(500,ErrorMessage.ACCESS_TOKEN_PRESENT ),
     STOLEN_REFRESH_TOKEN(500, ErrorMessage.STOLEN_REFRESH_TOKEN),
-    USER_NOT_FOUND(400, ErrorMessage.USER_NOT_FOUND );
+    USER_NOT_FOUND(400, ErrorMessage.USER_NOT_FOUND ),
+    PARTY_NOT_FOUND(400, ErrorMessage.PARTY_NOT_FOUND);
 
     private final int status;
     private final String message;

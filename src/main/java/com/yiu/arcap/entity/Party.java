@@ -36,9 +36,6 @@ public class Party {
     @Column(nullable = false, length = 10)
     private String partyName;
 
-    @Formula("(SELECT COUNT(*) FROM user_party up WHERE up.party_pid = pid AND up.status = 1)")
-    private int participantCount;
-
     //    @CreatedDate
     @CreationTimestamp
     @Column
