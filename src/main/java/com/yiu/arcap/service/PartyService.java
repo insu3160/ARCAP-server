@@ -15,6 +15,8 @@ import com.yiu.arcap.repository.UserPartyRepository;
 import com.yiu.arcap.repository.UserRepository;
 import com.yiu.arcap.util.RandomCodeGenerator;
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -61,6 +63,7 @@ public class PartyService {
         return true;
     }
 
+    @Transactional
     public Boolean join(String email, JoinDTO request) {
         if (request.getPartyCode() == null){
             throw new CustomException(ErrorCode.INSUFFICIENT_DATA);
@@ -81,4 +84,14 @@ public class PartyService {
         }
         return true;
     }
+
+    @Transactional
+    public List getMyParties(String email) {
+        User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        List<UserParty> acceptedList = userPartyRepository.findByStatusAndUser(ParticipationStatus.ACCEPTED, user);
+        return acceptedList.stream()
+                .map(UserParty::getParty)
+                .collect(Collectors.toList());
+    }
+
 }
