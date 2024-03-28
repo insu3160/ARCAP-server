@@ -3,8 +3,7 @@ package com.yiu.arcap.service;
 import com.yiu.arcap.constant.ParticipationStatus;
 import com.yiu.arcap.dto.PartyRequest.CreateDTO;
 import com.yiu.arcap.dto.PartyRequest.JoinDTO;
-import com.yiu.arcap.dto.PartyResponse;
-import com.yiu.arcap.dto.UserLoginResponseDto;
+import com.yiu.arcap.dto.PartyRequest.PidDto;
 import com.yiu.arcap.entity.Party;
 import com.yiu.arcap.entity.User;
 import com.yiu.arcap.entity.UserParty;
@@ -92,6 +91,15 @@ public class PartyService {
         return acceptedList.stream()
                 .map(UserParty::getParty)
                 .collect(Collectors.toList());
+    }
+
+    public List getApplications(String email, PidDto request) {
+        User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        Party party = partyRepository.findById(request.getPid()).orElseThrow(()->new CustomException(ErrorCode.PARTY_NOT_FOUND));
+        if (party.isLeader(user.getNickname())){
+            return userPartyRepository.findByStatusAndParty(ParticipationStatus.PENDING, party);
+        }
+        throw new CustomException(ErrorCode.NOT_EXIST);
     }
 
 }

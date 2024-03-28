@@ -15,4 +15,10 @@ public class PartyRequest {
     public static class JoinDTO {
         private String partyCode;
     }
+    @Getter
+    @Setter
+    public static class PidDto {
+        private Long pid;
+    }
+
 }

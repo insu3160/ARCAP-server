@@ -49,4 +49,8 @@ public class Party {
     @OneToMany(mappedBy = "party")
     private Set<UserParty> userParties = new HashSet<>();
 
+    public boolean isLeader(String nickname) {
+        return partyleader.equals(nickname);
+    }
+
 }
