@@ -115,4 +115,32 @@ public class PartyService {
         throw new CustomException(ErrorCode.ACCESS_NO_AUTH);
     }
 
+    @Transactional
+    public Boolean accept(String email, Long upid) {
+        User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        UserParty userParty = userPartyRepository.findById(upid).orElseThrow(()->new CustomException(ErrorCode.NOT_EXIST));
+        if (userParty.isAccepted()){
+            throw new CustomException(ErrorCode.ALREADY_EXIST);
+        }
+        else if (userParty.getParty().isLeader(user.getNickname())){
+            userParty.updateStatus(ParticipationStatus.ACCEPTED);
+            return true;
+        }
+        throw new CustomException(ErrorCode.NO_AUTH);
+    }
+
+    @Transactional
+    public Boolean reject(String email, Long upid) {
+        User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        UserParty userParty = userPartyRepository.findById(upid).orElseThrow(()->new CustomException(ErrorCode.NOT_EXIST));
+        if (userParty.isAccepted()){
+            throw new CustomException(ErrorCode.ALREADY_EXIST);
+        }
+        else if (userParty.getParty().isLeader(user.getNickname())){
+            userPartyRepository.delete(userParty);
+            return true;
+        }
+        throw new CustomException(ErrorCode.NO_AUTH);
+    }
+
 }

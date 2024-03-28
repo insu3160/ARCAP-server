@@ -57,4 +57,7 @@ public class UserParty {
         }
     }
 
+    public boolean isAccepted() {
+        return status == ParticipationStatus.ACCEPTED;
+    }
 }

@@ -4,6 +4,7 @@ import com.yiu.arcap.config.CustomUserDetails;
 import com.yiu.arcap.dto.PartyRequest;
 import com.yiu.arcap.dto.PartyRequest.CreateDTO;
 import com.yiu.arcap.dto.PartyResponse;
+import com.yiu.arcap.dto.UserPartyRequest;
 import com.yiu.arcap.entity.User;
 import com.yiu.arcap.exception.CustomException;
 import com.yiu.arcap.service.PartyService;
@@ -15,8 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,6 +49,16 @@ public class PartyController {
     @PostMapping(value = "/join",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Boolean> join(@AuthenticationPrincipal CustomUserDetails user, PartyRequest.JoinDTO request) throws Exception {
         return new ResponseEntity<Boolean>(partyService.join(user.getUsername(), request), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/accept/{id}",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<Boolean> accept(@AuthenticationPrincipal CustomUserDetails user, @PathVariable("id") Long id) throws Exception {
+        return new ResponseEntity<Boolean>(partyService.accept(user.getUsername(), id), HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/reject/{id}",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<Boolean> reject(@AuthenticationPrincipal CustomUserDetails user, @PathVariable("id") Long id) throws Exception {
+        return new ResponseEntity<Boolean>(partyService.reject(user.getUsername(), id), HttpStatus.OK);
     }
 
 }
