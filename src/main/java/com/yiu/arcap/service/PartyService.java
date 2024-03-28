@@ -4,6 +4,7 @@ import com.yiu.arcap.constant.ParticipationStatus;
 import com.yiu.arcap.dto.PartyRequest.CreateDTO;
 import com.yiu.arcap.dto.PartyRequest.JoinDTO;
 import com.yiu.arcap.dto.PartyRequest.PidDto;
+import com.yiu.arcap.dto.UserPartyDto;
 import com.yiu.arcap.entity.Party;
 import com.yiu.arcap.entity.User;
 import com.yiu.arcap.entity.UserParty;
@@ -69,6 +70,12 @@ public class PartyService {
         }
         User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         Party party = partyRepository.findByPartyCode(request.getPartyCode()).orElseThrow(()->new CustomException(ErrorCode.PARTY_NOT_FOUND));
+
+        if (userPartyRepository.existsByUserAndParty(user, party)) {
+            // 이미 존재하는 경우, 커스텀 예외 또는 에러 코드로 처리
+            throw new CustomException(ErrorCode.ALREADY_EXIST);
+        }
+
         try {
 
             UserParty userParty = UserParty.builder()
@@ -93,13 +100,19 @@ public class PartyService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public List getApplications(String email, PidDto request) {
         User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         Party party = partyRepository.findById(request.getPid()).orElseThrow(()->new CustomException(ErrorCode.PARTY_NOT_FOUND));
         if (party.isLeader(user.getNickname())){
-            return userPartyRepository.findByStatusAndParty(ParticipationStatus.PENDING, party);
+            return userPartyRepository.findByStatusAndParty(ParticipationStatus.PENDING, party).stream()
+                    .map(userParty -> UserPartyDto.builder()
+                            .nickname(userParty.getUser().getNickname())
+                            .upid(userParty.getUpid())
+                            .build())
+                    .collect(Collectors.toList());
         }
-        throw new CustomException(ErrorCode.NOT_EXIST);
+        throw new CustomException(ErrorCode.ACCESS_NO_AUTH);
     }
 
 }

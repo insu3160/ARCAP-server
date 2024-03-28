@@ -37,7 +37,7 @@ public class TokenProvider {
 
     private Key secretKey;
     // 만료시간 => 1h => 1000L * 60 * 60
-    private final long accessTokenValidTime = Duration.ofMinutes(5).toMillis();
+    private final long accessTokenValidTime = Duration.ofMinutes(60).toMillis();
 
     private final long refreshTokenValidTime = Duration.ofDays(14).toMillis();
     public String generateToken(User user) {

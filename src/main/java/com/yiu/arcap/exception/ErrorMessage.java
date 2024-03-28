@@ -22,4 +22,5 @@ public class ErrorMessage {
     public static final String STOLEN_REFRESH_TOKEN = "탈취당한 리프레시 토큰";
     public static final String USER_NOT_FOUND = "유저 찾을 수 없음";
     public static final String PARTY_NOT_FOUND = "파티 찾을 수 없음";
+    public static final String ALREADY_EXIST = "이미 존재함";
 }
