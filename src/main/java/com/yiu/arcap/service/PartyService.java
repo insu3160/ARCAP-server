@@ -2,6 +2,7 @@ package com.yiu.arcap.service;
 
 import com.yiu.arcap.constant.ParticipationStatus;
 import com.yiu.arcap.dto.PartyRequest.CreateDTO;
+import com.yiu.arcap.dto.PartyRequest.InviteDto;
 import com.yiu.arcap.dto.PartyRequest.JoinDTO;
 import com.yiu.arcap.dto.PartyRequest.PidDto;
 import com.yiu.arcap.dto.UserPartyDto;
@@ -139,6 +140,27 @@ public class PartyService {
         else if (userParty.getParty().isLeader(user.getNickname())){
             userPartyRepository.delete(userParty);
             return true;
+        }
+        throw new CustomException(ErrorCode.NO_AUTH);
+    }
+
+    @Transactional
+    public Boolean invite(String email, InviteDto request) {
+        User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        Party party = partyRepository.findById(request.getPid()).orElseThrow(()->new CustomException(ErrorCode.PARTY_NOT_FOUND));
+        if (party.isLeader(user.getNickname())){
+            try {
+                UserParty userParty = UserParty.builder()
+                        .user(userRepository.findByNickname(request.getNickname()).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND)))
+                        .party(party)
+                        .status(ParticipationStatus.INVITED)
+                        .build();
+                userPartyRepository.save(userParty);
+                return true;
+            }
+            catch (Exception e) {
+                throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
         }
         throw new CustomException(ErrorCode.NO_AUTH);
     }

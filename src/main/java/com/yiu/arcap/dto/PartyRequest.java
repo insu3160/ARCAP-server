@@ -20,5 +20,11 @@ public class PartyRequest {
     public static class PidDto {
         private Long pid;
     }
+    @Getter
+    @Setter
+    public static class InviteDto{
+        private String nickname;
+        private Long pid;
+    }
 
 }

@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum ParticipationStatus {
     PENDING(0), // 대기 중
     ACCEPTED(1), // 수락됨
-    REJECTED(2); // 거절됨
+    INVITED(2); // 초대됨
 
     private final int state;
 

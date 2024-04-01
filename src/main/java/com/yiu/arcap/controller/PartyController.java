@@ -2,20 +2,13 @@ package com.yiu.arcap.controller;
 
 import com.yiu.arcap.config.CustomUserDetails;
 import com.yiu.arcap.dto.PartyRequest;
-import com.yiu.arcap.dto.PartyRequest.CreateDTO;
-import com.yiu.arcap.dto.PartyResponse;
-import com.yiu.arcap.dto.UserPartyRequest;
-import com.yiu.arcap.entity.User;
-import com.yiu.arcap.exception.CustomException;
 import com.yiu.arcap.service.PartyService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +52,11 @@ public class PartyController {
     @DeleteMapping(value = "/reject/{id}",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Boolean> reject(@AuthenticationPrincipal CustomUserDetails user, @PathVariable("id") Long id) throws Exception {
         return new ResponseEntity<Boolean>(partyService.reject(user.getUsername(), id), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/invite",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<Boolean> invite(@AuthenticationPrincipal CustomUserDetails user, PartyRequest.InviteDto request) throws Exception {
+        return new ResponseEntity<Boolean>(partyService.invite(user.getUsername(), request), HttpStatus.OK);
     }
 
 }
