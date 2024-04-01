@@ -16,6 +16,7 @@ import com.yiu.arcap.repository.UserPartyRepository;
 import com.yiu.arcap.repository.UserRepository;
 import com.yiu.arcap.util.RandomCodeGenerator;
 import jakarta.transaction.Transactional;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -105,10 +106,13 @@ public class PartyService {
     public List getApplications(String email, PidDto request) {
         User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         Party party = partyRepository.findById(request.getPid()).orElseThrow(()->new CustomException(ErrorCode.PARTY_NOT_FOUND));
+
+        List<ParticipationStatus> unresolvedStatuses = Arrays.asList(ParticipationStatus.PENDING, ParticipationStatus.INVITED);
         if (party.isLeader(user.getNickname())){
-            return userPartyRepository.findByStatusAndParty(ParticipationStatus.PENDING, party).stream()
+            return userPartyRepository.findByStatusInAndParty(unresolvedStatuses, party).stream()
                     .map(userParty -> UserPartyDto.builder()
                             .nickname(userParty.getUser().getNickname())
+                            .participationStatus(userParty.getStatus())
                             .upid(userParty.getUpid())
                             .build())
                     .collect(Collectors.toList());
@@ -146,16 +150,27 @@ public class PartyService {
 
     @Transactional
     public Boolean invite(String email, InviteDto request) {
-        User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
-        Party party = partyRepository.findById(request.getPid()).orElseThrow(()->new CustomException(ErrorCode.PARTY_NOT_FOUND));
+        User user = userRepository.findById(email)
+                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        Party party = partyRepository.findById(request.getPid())
+                .orElseThrow(()->new CustomException(ErrorCode.PARTY_NOT_FOUND));
+        User invitedUser = userRepository.findByNickname(request.getNickname())
+                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (userPartyRepository.existsByUserAndParty(invitedUser, party)){
+            throw new CustomException(ErrorCode.ALREADY_EXIST);
+        }
+
         if (party.isLeader(user.getNickname())){
             try {
                 UserParty userParty = UserParty.builder()
-                        .user(userRepository.findByNickname(request.getNickname()).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND)))
+                        .user(invitedUser)
                         .party(party)
                         .status(ParticipationStatus.INVITED)
                         .build();
+
                 userPartyRepository.save(userParty);
+
                 return true;
             }
             catch (Exception e) {

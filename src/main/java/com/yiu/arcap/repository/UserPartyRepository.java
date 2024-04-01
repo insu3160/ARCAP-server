@@ -14,6 +14,6 @@ public interface UserPartyRepository extends JpaRepository<UserParty, Long> {
     List<UserParty> findByParty(Party party);
     List<UserParty> findByStatusAndUser(ParticipationStatus status, User user);
     List<UserParty> findByStatusAndParty(ParticipationStatus status, Party party);
-
+    List<UserParty> findByStatusInAndParty(List<ParticipationStatus> statuses, Party party);
     boolean existsByUserAndParty(User user, Party party);
 }
