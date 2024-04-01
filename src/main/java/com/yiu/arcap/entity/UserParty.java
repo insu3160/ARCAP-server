@@ -52,7 +52,7 @@ public class UserParty {
         this.status = newStatus;
 
         // 새 상태가 1(예: 활성 상태)일 경우, joinedAt을 현재 시간으로 설정
-        if (newStatus == ParticipationStatus.ACCEPTED) { // ACTIVE는 예시입니다. 실제 사용하는 열거형 값을 사용해야 합니다.
+        if (newStatus == ParticipationStatus.ACCEPTED) {
             this.joinedAt = LocalDateTime.now();
         }
     }
@@ -60,4 +60,10 @@ public class UserParty {
     public boolean isAccepted() {
         return status == ParticipationStatus.ACCEPTED;
     }
+
+
+    public boolean isInvited(User user) {
+        return this.user.equals(user) && this.status == ParticipationStatus.INVITED;
+    }
+
 }

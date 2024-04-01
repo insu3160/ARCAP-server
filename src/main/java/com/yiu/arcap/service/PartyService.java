@@ -121,7 +121,7 @@ public class PartyService {
     }
 
     @Transactional
-    public Boolean accept(String email, Long upid) {
+    public Boolean joinAccept(String email, Long upid) {
         User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         UserParty userParty = userPartyRepository.findById(upid).orElseThrow(()->new CustomException(ErrorCode.NOT_EXIST));
         if (userParty.isAccepted()){
@@ -135,7 +135,7 @@ public class PartyService {
     }
 
     @Transactional
-    public Boolean reject(String email, Long upid) {
+    public Boolean joinReject(String email, Long upid) {
         User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         UserParty userParty = userPartyRepository.findById(upid).orElseThrow(()->new CustomException(ErrorCode.NOT_EXIST));
         if (userParty.isAccepted()){
@@ -176,6 +176,47 @@ public class PartyService {
             catch (Exception e) {
                 throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
             }
+        }
+        throw new CustomException(ErrorCode.NO_AUTH);
+    }
+
+    @Transactional
+    public List getInvitations(String email) {
+        User user = userRepository.findById(email)
+                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        return userPartyRepository.findByStatusAndUser(ParticipationStatus.INVITED,user).stream()
+                .map(userParty -> UserPartyDto.builder()
+                        .participationStatus(userParty.getStatus())
+                        .partyName(userParty.getParty().getPartyName())
+                        .upid(userParty.getUpid())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Boolean inviteAccept(String email, Long upid) {
+        User user = userRepository.findById(email)
+                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        UserParty userParty = userPartyRepository.findById(upid)
+                .orElseThrow(()->new CustomException(ErrorCode.NOT_EXIST));
+
+        if (userParty.isInvited(user)){
+            userParty.updateStatus(ParticipationStatus.ACCEPTED);
+            return true;
+        }
+        throw new CustomException(ErrorCode.NO_AUTH);
+    }
+
+    @Transactional
+    public Boolean inviteReject(String email, Long upid) {
+        User user = userRepository.findById(email)
+                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        UserParty userParty = userPartyRepository.findById(upid)
+                .orElseThrow(()->new CustomException(ErrorCode.NOT_EXIST));
+
+        if (userParty.isInvited(user)){
+            userPartyRepository.delete(userParty);
+            return true;
         }
         throw new CustomException(ErrorCode.NO_AUTH);
     }
