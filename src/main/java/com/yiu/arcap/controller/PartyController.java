@@ -73,5 +73,9 @@ public class PartyController {
         return new ResponseEntity<Boolean>(partyService.inviteReject(user.getUsername(), id), HttpStatus.OK);
     }
 
+    @PostMapping(value = "/users", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<List> getPartyUsers(@AuthenticationPrincipal CustomUserDetails user, PartyRequest.PidDto request) throws Exception {
+        return new ResponseEntity<List>(partyService.getPartyUsers(user.getUsername(),request), HttpStatus.OK);
+    }
 
 }

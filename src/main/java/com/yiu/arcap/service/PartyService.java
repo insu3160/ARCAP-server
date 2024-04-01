@@ -221,4 +221,23 @@ public class PartyService {
         throw new CustomException(ErrorCode.NO_AUTH);
     }
 
+    public List getPartyUsers(String email, PidDto request) {
+        User user = userRepository.findById(email)
+                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        Party party = partyRepository.findById(request.getPid())
+                .orElseThrow(()->new CustomException(ErrorCode.PARTY_NOT_FOUND));
+
+        boolean isMember = userPartyRepository.existsByStatusAndUserAndParty(ParticipationStatus.ACCEPTED, user, party);
+        if (!isMember) {
+            throw new CustomException(ErrorCode.NO_AUTH);
+        }
+
+        return userPartyRepository.findByStatusAndParty(ParticipationStatus.ACCEPTED, party).stream()
+                .map(userParty -> UserPartyDto.UserListDto.builder()
+                        .nickname(userParty.getUser().getNickname())
+                        .joinedAt(userParty.getJoinedAt())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 }
