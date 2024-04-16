@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -56,6 +57,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<UserParty> userParties = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Capsule> capsules = new ArrayList<>();
 
     public User(String email, String nickname, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.email = email;

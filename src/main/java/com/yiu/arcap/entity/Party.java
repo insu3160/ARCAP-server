@@ -7,14 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
@@ -48,6 +49,9 @@ public class Party {
 
     @OneToMany(mappedBy = "party")
     private Set<UserParty> userParties = new HashSet<>();
+
+    @OneToMany(mappedBy = "party")
+    private List<Capsule> capsules = new ArrayList<>();
 
     public boolean isLeader(String nickname) {
         return partyleader.equals(nickname);

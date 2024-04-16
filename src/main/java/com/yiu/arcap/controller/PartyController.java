@@ -24,6 +24,11 @@ public class PartyController {
 
     private final PartyService partyService;
 
+    @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<Boolean> create(@AuthenticationPrincipal CustomUserDetails user, PartyRequest.CreateDTO request) throws Exception {
+        return new ResponseEntity<Boolean>(partyService.create(user.getUsername(), request), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/my", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<List> getMyParties(@AuthenticationPrincipal CustomUserDetails user) throws Exception {
         return new ResponseEntity<List>(partyService.getMyParties(user.getUsername()), HttpStatus.OK);
@@ -32,11 +37,6 @@ public class PartyController {
     @PostMapping(value = "/applications", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<List> getApplications(@AuthenticationPrincipal CustomUserDetails user, PartyRequest.PidDto request) throws Exception {
         return new ResponseEntity<List>(partyService.getApplications(user.getUsername(),request), HttpStatus.OK);
-    }
-
-    @PostMapping(value = "/create",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<Boolean> create(@AuthenticationPrincipal CustomUserDetails user, PartyRequest.CreateDTO request) throws Exception {
-        return new ResponseEntity<Boolean>(partyService.create(user.getUsername(), request), HttpStatus.OK);
     }
 
     @PostMapping(value = "/join",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)

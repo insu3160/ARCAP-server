@@ -221,6 +221,7 @@ public class PartyService {
         throw new CustomException(ErrorCode.NO_AUTH);
     }
 
+    @Transactional
     public List getPartyUsers(String email, PidDto request) {
         User user = userRepository.findById(email)
                 .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
