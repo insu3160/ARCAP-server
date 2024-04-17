@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import org.hibernate.annotations.Type;
+import org.locationtech.jts.geom.Point;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +21,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Capsule {
+public class Capsule{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cid;
@@ -48,5 +50,12 @@ public class Capsule {
 
     @Column
     private int likesCount;
+
+    private Double latitude;
+
+    private Double longitude;
+
+    @Column(nullable = false)
+    private Point point;
 
 }
