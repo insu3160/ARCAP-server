@@ -61,6 +61,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Capsule> capsules = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private Set<Likes> likes;
+
     public User(String email, String nickname, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.email = email;
         this.nickname = nickname;

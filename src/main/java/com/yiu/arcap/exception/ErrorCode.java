@@ -43,6 +43,7 @@ public enum ErrorCode {
     ACCESS_TOKEN_PRESENT(500,ErrorMessage.ACCESS_TOKEN_PRESENT ),
     STOLEN_REFRESH_TOKEN(500, ErrorMessage.STOLEN_REFRESH_TOKEN),
     USER_NOT_FOUND(400, ErrorMessage.USER_NOT_FOUND ),
+    CAPSULE_NOT_FOUND(400, ErrorMessage.CAPSULE_NOT_FOUND),
     PARTY_NOT_FOUND(400, ErrorMessage.PARTY_NOT_FOUND);
 
     private final int status;
