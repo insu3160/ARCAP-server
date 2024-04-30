@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PartyResponse {
+public class PartyResponseDto {
 
     private Long pid;
 

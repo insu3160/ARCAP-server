@@ -5,6 +5,7 @@ import com.yiu.arcap.dto.PartyRequest.CreateDTO;
 import com.yiu.arcap.dto.PartyRequest.InviteDto;
 import com.yiu.arcap.dto.PartyRequest.JoinDTO;
 import com.yiu.arcap.dto.PartyRequest.PidDto;
+import com.yiu.arcap.dto.PartyResponseDto;
 import com.yiu.arcap.dto.UserPartyDto;
 import com.yiu.arcap.entity.Party;
 import com.yiu.arcap.entity.User;
@@ -98,7 +99,18 @@ public class PartyService {
         User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         List<UserParty> acceptedList = userPartyRepository.findByStatusAndUser(ParticipationStatus.ACCEPTED, user);
         return acceptedList.stream()
-                .map(UserParty::getParty)
+                .map(userParty -> {
+                    Party party = userParty.getParty();
+                    int participantCount = userPartyRepository.countByPartyAndStatus(party, ParticipationStatus.ACCEPTED);
+
+                    return PartyResponseDto.builder()
+                            .pid(party.getPid())
+                            .partyName(party.getPartyName())
+                            .createdAt(party.getCreatedAt())
+                            .updatedAt(party.getUpdatedAt())
+                            .participantCount(participantCount)
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 

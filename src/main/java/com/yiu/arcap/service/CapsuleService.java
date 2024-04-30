@@ -126,4 +126,8 @@ public class CapsuleService {
                 .collect(Collectors.toList());
     }
 
+//    public CapsuleResponseDto getCapsule(String username, Long cid) {
+//
+//    }
+//
 }

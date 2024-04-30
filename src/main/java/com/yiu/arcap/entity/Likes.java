@@ -34,4 +34,5 @@ public class Likes {
         this.user = user;
         this.capsule = capsule;
     }
+
 }

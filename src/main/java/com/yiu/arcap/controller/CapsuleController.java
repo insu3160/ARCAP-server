@@ -2,6 +2,7 @@ package com.yiu.arcap.controller;
 
 import com.yiu.arcap.config.CustomUserDetails;
 import com.yiu.arcap.dto.CapsuleRequest;
+import com.yiu.arcap.dto.CapsuleResponseDto;
 import com.yiu.arcap.dto.PartyRequest;
 import com.yiu.arcap.service.CapsuleService;
 import com.yiu.arcap.service.LikesService;
@@ -43,5 +44,11 @@ public class CapsuleController {
     public ResponseEntity<Boolean> toggleLike(@AuthenticationPrincipal CustomUserDetails user, @PathVariable Long cid) {
         return new ResponseEntity<Boolean>(likesService.toggleLike(user.getUsername(), cid), HttpStatus.OK);
     }
+
+//    @GetMapping("/{cid}")
+//    public ResponseEntity<CapsuleResponseDto> getCapsule(@AuthenticationPrincipal CustomUserDetails user,
+//                                                         @PathVariable Long cid) throws Exception {
+//        return new ResponseEntity<CapsuleResponseDto>(capsuleService.getCapsule(user.getUsername(), cid), HttpStatus.OK);
+//    }
 
 }
