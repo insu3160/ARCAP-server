@@ -2,6 +2,7 @@ package com.yiu.arcap.dto;
 
 import com.yiu.arcap.entity.Party;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,4 +36,5 @@ public class CapsuleResponseDto {
 
     private int likesCount;
 
+    private List<CapsuleCommentResponseDto> comments;
 }

@@ -33,7 +33,7 @@ public class CapsuleComment {
     private User user;
 
     @Column(nullable = false, length = 500) // 댓글 내용은 500자로 제한합니다.
-    private String content;
+    private String contents;
 
     @CreationTimestamp
     @Column(nullable = false)

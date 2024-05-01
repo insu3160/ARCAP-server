@@ -2,16 +2,19 @@ package com.yiu.arcap.service;
 
 import com.yiu.arcap.constant.Direction;
 import com.yiu.arcap.constant.ParticipationStatus;
+import com.yiu.arcap.dto.CapsuleCommentResponseDto;
 import com.yiu.arcap.dto.CapsuleRequest.CreateDTO;
 import com.yiu.arcap.dto.CapsuleRequest.LocationDto;
 import com.yiu.arcap.dto.CapsuleResponseDto;
 import com.yiu.arcap.entity.Capsule;
+import com.yiu.arcap.entity.CapsuleComment;
 import com.yiu.arcap.entity.Location;
 import com.yiu.arcap.entity.Party;
 import com.yiu.arcap.entity.User;
 import com.yiu.arcap.entity.UserParty;
 import com.yiu.arcap.exception.CustomException;
 import com.yiu.arcap.exception.ErrorCode;
+import com.yiu.arcap.repository.CapsuleCommentRepository;
 import com.yiu.arcap.repository.CapsuleRepository;
 import com.yiu.arcap.repository.PartyRepository;
 import com.yiu.arcap.repository.UserPartyRepository;
@@ -23,6 +26,7 @@ import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.xml.stream.events.Comment;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
@@ -39,6 +43,8 @@ public class CapsuleService {
     private final UserPartyRepository userPartyRepository;
 
     private final CapsuleRepository capsuleRepository;
+
+    private final CapsuleCommentRepository capsuleCommentRepository;
     @PersistenceContext
     private EntityManager em;
     @Transactional
@@ -126,8 +132,38 @@ public class CapsuleService {
                 .collect(Collectors.toList());
     }
 
-//    public CapsuleResponseDto getCapsule(String username, Long cid) {
-//
-//    }
-//
+    public CapsuleResponseDto getCapsule(String email, Long cid) {
+        User user = userRepository.findById(email)
+                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        Capsule capsule = capsuleRepository.findById(cid)
+                .orElseThrow(()->new CustomException(ErrorCode.CAPSULE_NOT_FOUND));
+
+        if (userPartyRepository.existsByStatusAndUserAndParty(ParticipationStatus.ACCEPTED, user, capsule.getParty())){
+            List<CapsuleComment> comments = capsuleCommentRepository.findByCapsule(capsule);
+            return  CapsuleResponseDto.builder()
+                    .cid(capsule.getCid())
+                    .partyName(capsule.getParty().getPartyName())
+                    .nickName(capsule.getUser().getNickname())
+                    .locationName(capsule.getLocationName())
+                    .title(capsule.getTitle())
+                    .latitude(capsule.getLatitude())
+                    .longitude(capsule.getLongitude())
+                    .contents(capsule.getContents())
+                    .createdAt(capsule.getCreatedAt())
+                    .likesCount(capsule.getLikesCount()) // 가정한 필드
+                    // 추가된 댓글 데이터 설정
+                    .comments(comments.stream().map(comment ->
+                                    CapsuleCommentResponseDto.builder()
+                                            .ccid(comment.getCcid())
+                                            .contents(comment.getContents())
+                                            .nickName(comment.getUser().getNickname()) // 가정: 댓글 작성자 닉네임을 가져오는 방법
+                                            .createdAt(comment.getCreatedAt())
+                                            .build())
+                            .collect(Collectors.toList()))
+                    .build();
+        }
+
+        throw new CustomException(ErrorCode.NO_AUTH);
+    }
+
 }

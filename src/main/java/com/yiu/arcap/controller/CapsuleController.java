@@ -45,10 +45,10 @@ public class CapsuleController {
         return new ResponseEntity<Boolean>(likesService.toggleLike(user.getUsername(), cid), HttpStatus.OK);
     }
 
-//    @GetMapping("/{cid}")
-//    public ResponseEntity<CapsuleResponseDto> getCapsule(@AuthenticationPrincipal CustomUserDetails user,
-//                                                         @PathVariable Long cid) throws Exception {
-//        return new ResponseEntity<CapsuleResponseDto>(capsuleService.getCapsule(user.getUsername(), cid), HttpStatus.OK);
-//    }
+    @GetMapping("/{cid}")
+    public ResponseEntity<CapsuleResponseDto> getCapsule(@AuthenticationPrincipal CustomUserDetails user,
+                                                         @PathVariable Long cid) throws Exception {
+        return new ResponseEntity<CapsuleResponseDto>(capsuleService.getCapsule(user.getUsername(), cid), HttpStatus.OK);
+    }
 
 }

@@ -38,7 +38,7 @@ public class CapsuleCommentService {
                CapsuleComment capsuleComment = CapsuleComment.builder()
                        .user(user)
                        .capsule(capsule)
-                       .content(request.getContents())
+                       .contents(request.getContents())
                        .build();
                capsuleCommentRepository.save(capsuleComment);
                return true;
