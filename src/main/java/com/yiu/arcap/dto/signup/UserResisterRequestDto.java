@@ -1,4 +1,4 @@
-package com.yiu.arcap.dto;
+package com.yiu.arcap.dto.signup;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

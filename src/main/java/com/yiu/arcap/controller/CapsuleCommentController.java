@@ -1,8 +1,7 @@
 package com.yiu.arcap.controller;
 
 import com.yiu.arcap.config.CustomUserDetails;
-import com.yiu.arcap.dto.CapsuleCommentRequest;
-import com.yiu.arcap.dto.CapsuleRequest;
+import com.yiu.arcap.dto.capsulecomment.CapsuleCommentRequestDto;
 import com.yiu.arcap.service.CapsuleCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CapsuleCommentController {
     private final CapsuleCommentService capsuleCommentService;
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<Boolean> create(@AuthenticationPrincipal CustomUserDetails user, CapsuleCommentRequest.CreateDTO request) throws Exception {
+    public ResponseEntity<Boolean> create(@AuthenticationPrincipal CustomUserDetails user, CapsuleCommentRequestDto.CreateDTO request) throws Exception {
         return new ResponseEntity<Boolean>(capsuleCommentService.create(user.getUsername(), request), HttpStatus.OK);
     }
 }

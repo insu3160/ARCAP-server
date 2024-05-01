@@ -1,12 +1,12 @@
 package com.yiu.arcap.service;
 
 import com.yiu.arcap.constant.ParticipationStatus;
-import com.yiu.arcap.dto.PartyRequest.CreateDTO;
-import com.yiu.arcap.dto.PartyRequest.InviteDto;
-import com.yiu.arcap.dto.PartyRequest.JoinDTO;
-import com.yiu.arcap.dto.PartyRequest.PidDto;
-import com.yiu.arcap.dto.PartyResponseDto;
-import com.yiu.arcap.dto.UserPartyDto;
+import com.yiu.arcap.dto.userparty.ApplicationResponseDto;
+import com.yiu.arcap.dto.party.PartyRequestDto.CreateDTO;
+import com.yiu.arcap.dto.party.PartyRequestDto.InviteDto;
+import com.yiu.arcap.dto.party.PartyRequestDto.JoinDTO;
+import com.yiu.arcap.dto.party.PartyResponseDto;
+import com.yiu.arcap.dto.userparty.UserPartyResponseDto;
 import com.yiu.arcap.entity.Party;
 import com.yiu.arcap.entity.User;
 import com.yiu.arcap.entity.UserParty;
@@ -115,19 +115,22 @@ public class PartyService {
     }
 
     @Transactional
-    public List getApplications(String email, PidDto request) {
+    public ApplicationResponseDto getApplications(String email, Long pid) {
         User user = userRepository.findById(email).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
-        Party party = partyRepository.findById(request.getPid()).orElseThrow(()->new CustomException(ErrorCode.PARTY_NOT_FOUND));
+        Party party = partyRepository.findById(pid).orElseThrow(()->new CustomException(ErrorCode.PARTY_NOT_FOUND));
 
         List<ParticipationStatus> unresolvedStatuses = Arrays.asList(ParticipationStatus.PENDING, ParticipationStatus.INVITED);
         if (party.isLeader(user.getNickname())){
-            return userPartyRepository.findByStatusInAndParty(unresolvedStatuses, party).stream()
-                    .map(userParty -> UserPartyDto.builder()
-                            .nickname(userParty.getUser().getNickname())
-                            .participationStatus(userParty.getStatus())
-                            .upid(userParty.getUpid())
-                            .build())
-                    .collect(Collectors.toList());
+            return ApplicationResponseDto.builder()
+                    .partyCode(party.getPartyCode())
+                    .applications(userPartyRepository.findByStatusInAndParty(unresolvedStatuses, party).stream()
+                            .map(userParty -> UserPartyResponseDto.builder()
+                                    .nickname(userParty.getUser().getNickname())
+                                    .participationStatus(userParty.getStatus())
+                                    .upid(userParty.getUpid())
+                                    .build())
+                            .collect(Collectors.toList()))
+                    .build();
         }
         throw new CustomException(ErrorCode.ACCESS_NO_AUTH);
     }
@@ -197,7 +200,7 @@ public class PartyService {
         User user = userRepository.findById(email)
                 .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
         return userPartyRepository.findByStatusAndUser(ParticipationStatus.INVITED,user).stream()
-                .map(userParty -> UserPartyDto.builder()
+                .map(userParty -> UserPartyResponseDto.builder()
                         .participationStatus(userParty.getStatus())
                         .partyName(userParty.getParty().getPartyName())
                         .upid(userParty.getUpid())
@@ -234,10 +237,10 @@ public class PartyService {
     }
 
     @Transactional
-    public List getPartyUsers(String email, PidDto request) {
+    public List getPartyUsers(String email, Long pid) {
         User user = userRepository.findById(email)
                 .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
-        Party party = partyRepository.findById(request.getPid())
+        Party party = partyRepository.findById(pid)
                 .orElseThrow(()->new CustomException(ErrorCode.PARTY_NOT_FOUND));
 
         boolean isMember = userPartyRepository.existsByStatusAndUserAndParty(ParticipationStatus.ACCEPTED, user, party);
@@ -246,7 +249,7 @@ public class PartyService {
         }
 
         return userPartyRepository.findByStatusAndParty(ParticipationStatus.ACCEPTED, party).stream()
-                .map(userParty -> UserPartyDto.UserListDto.builder()
+                .map(userParty -> UserPartyResponseDto.UserListDto.builder()
                         .nickname(userParty.getUser().getNickname())
                         .joinedAt(userParty.getJoinedAt())
                         .build())

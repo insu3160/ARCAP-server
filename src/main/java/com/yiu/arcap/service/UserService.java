@@ -1,12 +1,12 @@
 package com.yiu.arcap.service;
 
-import com.yiu.arcap.dto.AuthVerifyRequestDto;
-import com.yiu.arcap.dto.NickCheckRequestDto;
+import com.yiu.arcap.dto.signup.AuthVerifyRequestDto;
+import com.yiu.arcap.dto.signup.NickCheckRequestDto;
 import com.yiu.arcap.dto.TokenRequestDto;
 import com.yiu.arcap.dto.TokenResponseDto;
 import com.yiu.arcap.dto.UserLoginRequestDto;
 import com.yiu.arcap.dto.UserLoginResponseDto;
-import com.yiu.arcap.dto.UserResisterRequestDto;
+import com.yiu.arcap.dto.signup.UserResisterRequestDto;
 import com.yiu.arcap.entity.RefreshToken;
 import com.yiu.arcap.entity.User;
 import com.yiu.arcap.exception.CustomException;
@@ -18,7 +18,6 @@ import com.yiu.arcap.util.RandomCodeGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

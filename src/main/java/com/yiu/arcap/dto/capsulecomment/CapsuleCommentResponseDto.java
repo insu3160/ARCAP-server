@@ -1,4 +1,4 @@
-package com.yiu.arcap.dto;
+package com.yiu.arcap.dto.capsulecomment;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -12,18 +12,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PartyResponseDto {
+public class CapsuleCommentResponseDto {
+    private Long ccid;
 
-    private Long pid;
+    private String contents;
 
-    private String partyName;
-
-    private String personNum;
+    private String nickName;
 
     private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
-    private int participantCount;
-
 }

@@ -1,7 +1,6 @@
-package com.yiu.arcap.dto;
+package com.yiu.arcap.dto.userparty;
 
 import com.yiu.arcap.constant.ParticipationStatus;
-import com.yiu.arcap.entity.Party;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +12,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserPartyDto {
+public class UserPartyResponseDto {
     private String nickname;
     private ParticipationStatus participationStatus;
     private String partyName;

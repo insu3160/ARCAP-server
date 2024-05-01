@@ -1,6 +1,6 @@
-package com.yiu.arcap.dto;
+package com.yiu.arcap.dto.capsule;
 
-import com.yiu.arcap.entity.Party;
+import com.yiu.arcap.dto.capsulecomment.CapsuleCommentResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.locationtech.jts.geom.Point;
 
 @Getter
 @Setter

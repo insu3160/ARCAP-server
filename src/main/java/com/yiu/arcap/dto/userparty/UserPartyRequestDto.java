@@ -1,9 +1,9 @@
-package com.yiu.arcap.dto;
+package com.yiu.arcap.dto.userparty;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class UserPartyRequest {
+public class UserPartyRequestDto {
     @Getter
     @Setter
     public static class UPidDto {

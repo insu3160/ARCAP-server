@@ -1,7 +1,7 @@
 package com.yiu.arcap.service;
 
 import com.yiu.arcap.constant.ParticipationStatus;
-import com.yiu.arcap.dto.CapsuleCommentRequest.CreateDTO;
+import com.yiu.arcap.dto.capsulecomment.CapsuleCommentRequestDto.CreateDTO;
 import com.yiu.arcap.entity.Capsule;
 import com.yiu.arcap.entity.CapsuleComment;
 import com.yiu.arcap.entity.Party;

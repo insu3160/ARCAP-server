@@ -1,14 +1,14 @@
 package com.yiu.arcap.controller;
 
 
-import com.yiu.arcap.dto.AuthGenerateRequestDto;
-import com.yiu.arcap.dto.AuthVerifyRequestDto;
-import com.yiu.arcap.dto.NickCheckRequestDto;
+import com.yiu.arcap.dto.signup.AuthGenerateRequestDto;
+import com.yiu.arcap.dto.signup.AuthVerifyRequestDto;
+import com.yiu.arcap.dto.signup.NickCheckRequestDto;
 import com.yiu.arcap.dto.TokenRequestDto;
 import com.yiu.arcap.dto.TokenResponseDto;
 import com.yiu.arcap.dto.UserLoginRequestDto;
 import com.yiu.arcap.dto.UserLoginResponseDto;
-import com.yiu.arcap.dto.UserResisterRequestDto;
+import com.yiu.arcap.dto.signup.UserResisterRequestDto;
 import com.yiu.arcap.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

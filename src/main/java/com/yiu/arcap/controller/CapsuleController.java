@@ -1,9 +1,8 @@
 package com.yiu.arcap.controller;
 
 import com.yiu.arcap.config.CustomUserDetails;
-import com.yiu.arcap.dto.CapsuleRequest;
-import com.yiu.arcap.dto.CapsuleResponseDto;
-import com.yiu.arcap.dto.PartyRequest;
+import com.yiu.arcap.dto.capsule.CapsuleRequestDto;
+import com.yiu.arcap.dto.capsule.CapsuleResponseDto;
 import com.yiu.arcap.service.CapsuleService;
 import com.yiu.arcap.service.LikesService;
 import java.util.List;
@@ -30,13 +29,13 @@ public class CapsuleController {
     private final LikesService likesService;
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<Boolean> create(@AuthenticationPrincipal CustomUserDetails user, CapsuleRequest.CreateDTO request) throws Exception {
+    public ResponseEntity<Boolean> create(@AuthenticationPrincipal CustomUserDetails user, CapsuleRequestDto.CreateDTO request) throws Exception {
         return new ResponseEntity<Boolean>(capsuleService.create(user.getUsername(), request), HttpStatus.OK);
     }
 
     @GetMapping()
     public ResponseEntity<List> partyCapsules(@AuthenticationPrincipal CustomUserDetails user,
-                                              @ModelAttribute CapsuleRequest.LocationDto request) throws Exception {
+                                              @ModelAttribute CapsuleRequestDto.LocationDto request) throws Exception {
         return new ResponseEntity<List>(capsuleService.getPartyCapsules(user.getUsername(), request), HttpStatus.OK);
     }
 

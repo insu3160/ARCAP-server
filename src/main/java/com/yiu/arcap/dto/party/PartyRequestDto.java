@@ -1,10 +1,9 @@
-package com.yiu.arcap.dto;
+package com.yiu.arcap.dto.party;
 
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
-public class PartyRequest {
+public class PartyRequestDto {
     @Getter
     @Setter
     public static class CreateDTO {

@@ -1,9 +1,9 @@
-package com.yiu.arcap.dto;
+package com.yiu.arcap.dto.capsule;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class CapsuleRequest {
+public class CapsuleRequestDto {
     @Getter
     @Setter
     public static class CreateDTO {
