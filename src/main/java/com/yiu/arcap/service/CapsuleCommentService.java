@@ -26,6 +26,7 @@ public class CapsuleCommentService {
     private final UserPartyRepository userPartyRepository;
 
     private final CapsuleCommentRepository capsuleCommentRepository;
+
     public Boolean create(String email, CreateDTO request) {
         User user = userRepository.findById(email)
                 .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -48,6 +49,21 @@ public class CapsuleCommentService {
         }
 
         throw new CustomException(ErrorCode.NO_AUTH);
+    }
+
+    public Boolean delete(String email, Long commentid) {
+        User user = userRepository.findById(email)
+                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        CapsuleComment capsuleComment = capsuleCommentRepository.findById(commentid)
+                .orElseThrow(()->new CustomException(ErrorCode.CAPSULECOMMENT_NOT_FOUND));
+
+        if (capsuleComment.getUser().getEmail().equals(user.getEmail())){
+            capsuleCommentRepository.delete(capsuleComment);
+            return true;
+        }
+
+        throw new CustomException(ErrorCode.NO_AUTH);
+
     }
 
 }

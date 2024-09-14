@@ -35,6 +35,7 @@ public enum ErrorCode {
     DUPLICATE(409, ErrorMessage.DUPLICATE),
     // 인원 초과
     EXCESS(409, ErrorMessage.EXCESS),
+    EMAIL_SEND_FAILED(409, ErrorMessage.EMAIL_SEND_FAILED),
 
     // 서버 오류
     INTERNAL_SERVER_ERROR(500, ErrorMessage.INTERNAL_SERVER_ERROR),
@@ -44,7 +45,8 @@ public enum ErrorCode {
     STOLEN_REFRESH_TOKEN(500, ErrorMessage.STOLEN_REFRESH_TOKEN),
     USER_NOT_FOUND(400, ErrorMessage.USER_NOT_FOUND ),
     CAPSULE_NOT_FOUND(400, ErrorMessage.CAPSULE_NOT_FOUND),
-    PARTY_NOT_FOUND(400, ErrorMessage.PARTY_NOT_FOUND);
+    PARTY_NOT_FOUND(400, ErrorMessage.PARTY_NOT_FOUND),
+    CAPSULECOMMENT_NOT_FOUND(400, ErrorMessage.CAPSULECOMMENT_NOT_FOUND);
 
     private final int status;
     private final String message;

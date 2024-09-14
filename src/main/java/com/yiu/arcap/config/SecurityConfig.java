@@ -65,6 +65,7 @@ public class SecurityConfig {
                                 .requestMatchers("/login", "/join", "/refresh", "/token", "/join/authgenerate", "/join/authverify", "/nicknamecheck").permitAll()
                                 .requestMatchers("/party/**").authenticated()
                                 .requestMatchers("/capsule/**").authenticated()
+                                .requestMatchers("/comment/**").authenticated()
                                 .anyRequest().authenticated()
                 )
                 // JWT 인증 필터 적용
@@ -90,6 +91,7 @@ public class SecurityConfig {
                                 response.setCharacterEncoding("utf-8");
                                 response.setContentType("text/html; charset=UTF-8");
                                 response.getWriter().write("권한이 없는 사용자입니다");
+
                             }
                         })
                 )

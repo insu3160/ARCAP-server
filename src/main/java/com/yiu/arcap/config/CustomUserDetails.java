@@ -11,6 +11,7 @@ public class CustomUserDetails implements UserDetails {
     private final User user;
 
     private String role;
+
     public String getRole() {
         return role;
     }

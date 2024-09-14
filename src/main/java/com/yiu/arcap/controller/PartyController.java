@@ -51,8 +51,8 @@ public class PartyController {
     }
 
     @DeleteMapping(value = "/joinreject/{upid}",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<Boolean> joinReject(@AuthenticationPrincipal CustomUserDetails user, @PathVariable("id") Long id) throws Exception {
-        return new ResponseEntity<Boolean>(partyService.joinReject(user.getUsername(), id), HttpStatus.OK);
+    public ResponseEntity<Boolean> joinReject(@AuthenticationPrincipal CustomUserDetails user, @PathVariable("upid") Long upid) throws Exception {
+        return new ResponseEntity<Boolean>(partyService.joinReject(user.getUsername(), upid), HttpStatus.OK);
     }
 
     @PostMapping(value = "/invite",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
